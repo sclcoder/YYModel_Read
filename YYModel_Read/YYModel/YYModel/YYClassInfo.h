@@ -24,10 +24,11 @@ typedef NS_OPTIONS(NSUInteger, YYEncodingType) {
         二进制 1111 1111
      */
     
-    // 低八位的值： 变量的数据类型
     YYEncodingTypeMask       = 0xFF, ///< mask of type value
-    // 位置类型
+    // 未知类型
     YYEncodingTypeUnknown    = 0, ///< unknown
+    
+    // 低八位的值: 变量的数据类型
     // 基础变量类型
     YYEncodingTypeVoid       = 1, ///< void
     YYEncodingTypeBool       = 2, ///< bool

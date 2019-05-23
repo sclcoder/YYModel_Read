@@ -13,6 +13,28 @@
 #import "YYClassInfo.h"
 #import <objc/message.h>
 
+/***
+ __inline__ __attribute__((always_inline))
+ It forces the compiler to inline the function even if optimizations are disabled
+ 所有加__inline__ __attribute__((always_inline)) 修饰的函数在被调用的时候不会被编译成函数调用,而是直接扩展到调用函数体内.
+
+ 比如:
+ 
+ __attribute__((always_inline)) void a(){
+    print("a");
+ }
+
+ void b()
+ {
+    a();
+ }
+ ------编译后------
+ void b()
+ {
+    print("a");
+ }
+ 
+ */
 #define force_inline __inline__ __attribute__((always_inline))
 
 /// Foundation Class Type
