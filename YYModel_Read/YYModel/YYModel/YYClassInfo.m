@@ -12,25 +12,21 @@
 #import "YYClassInfo.h"
 #import <objc/runtime.h>
 
-// const char *typeEncoding   从右向左读(*读成指向) typeEncoding指向 const char
+
 YYEncodingType YYEncodingGetType(const char *typeEncoding) {
     
-    // const修饰符只是告诉"编译器"该指针指向的内容或者其他变量是只读的，不可以修改。如果你修改那么编译器就会报错的
-    // const char * 类型转为 char *类型
-    // char *p = "string" 的意思是 p指向string所在的地址，即:p中存储的是"string"串的首地址。
     char *type = (char *)typeEncoding;
     if (!type) return YYEncodingTypeUnknown;
     // size_t 这个类型可移植性更好
     size_t len = strlen(type);
     if (len == 0) return YYEncodingTypeUnknown;
     
-    
-    // 用qualifier来确定当前type的encode
+    // 用qualifier(修饰语)来确定当前type的encode
     YYEncodingType qualifier = 0;
     bool prefix = true;
     while (prefix) {
-        // *type 取内容 如果type指向字符串的地址 就是字符串的首地址 那么*type就是字符串的第一个字符
-        // 例如 type = "NSString"  *type 就是 N
+        // *type取内容 如果type指向字符串的地址 就是字符串的首地址 那么*type就是字符串的第一个字符
+        // 例如 type = "NSString" *type就是N
         
         // 判断method的类型，如果有就type指针＋1，判断下一个字符，如果没有则跳出循环
         switch (*type) {
@@ -68,7 +64,7 @@ YYEncodingType YYEncodingGetType(const char *typeEncoding) {
 
     len = strlen(type);
     if (len == 0) return YYEncodingTypeUnknown | qualifier;
-
+    // 类型的编码
     switch (*type) {
         case 'v': return YYEncodingTypeVoid | qualifier;
         case 'B': return YYEncodingTypeBool | qualifier;

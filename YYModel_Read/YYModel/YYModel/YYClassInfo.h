@@ -18,18 +18,10 @@ NS_ASSUME_NONNULL_BEGIN
  Type encoding's type.
  */
 typedef NS_OPTIONS(NSUInteger, YYEncodingType) {
-    /**
-        0x代表十六进制  0xFF
-        十进制 255(15*16^1+15*16^0)
-        二进制 1111 1111
-     */
     
     YYEncodingTypeMask       = 0xFF, ///< mask of type value
-    // 未知类型
     YYEncodingTypeUnknown    = 0, ///< unknown
     
-    // 低八位的值: 变量的数据类型
-    // 基础变量类型
     YYEncodingTypeVoid       = 1, ///< void
     YYEncodingTypeBool       = 2, ///< bool
     YYEncodingTypeInt8       = 3, ///< char / BOOL
@@ -43,30 +35,26 @@ typedef NS_OPTIONS(NSUInteger, YYEncodingType) {
     YYEncodingTypeFloat      = 11, ///< float
     YYEncodingTypeDouble     = 12, ///< double
     YYEncodingTypeLongDouble = 13, ///< long double
-    // 自定义类型,NSObject
-    YYEncodingTypeObject     = 14, ///< id
-    // Class 类型
-    YYEncodingTypeClass      = 15, ///< Class
-    // SEL字符串
-    YYEncodingTypeSEL        = 16, ///< SEL
     
+    YYEncodingTypeObject     = 14, ///< id
+    
+    YYEncodingTypeClass      = 15, ///< Class
+    YYEncodingTypeSEL        = 16, ///< SEL
     YYEncodingTypeBlock      = 17, ///< block
     YYEncodingTypePointer    = 18, ///< void*
     YYEncodingTypeStruct     = 19, ///< struct
     YYEncodingTypeUnion      = 20, ///< union
-    // c字符串
     YYEncodingTypeCString    = 21, ///< char*
-    // 数组类型
     YYEncodingTypeCArray     = 22, ///< char[10] (for example)
 
     /**
         十六进制 0xFF00         二进制   1111 1111 0000 0000
         << 向左移位(二进制) 1<<8
-        相当于0000 0000 0001  左移动8位  0000 0001 0000 0000
+        如 0000 0000 0001  左移动8位  0000 0001 0000 0000
      */
     
     // 8~16位的值类型
-    YYEncodingTypeQualifierMask   = 0xFF00,   ///< mask of qualifier
+    YYEncodingTypeQualifierMask   = 0xFF00,   ///< mask of qualifier(修饰语)
     // 方法类型
     YYEncodingTypeQualifierConst  = 1 << 8,  ///< const
     YYEncodingTypeQualifierIn     = 1 << 9,  ///< in
