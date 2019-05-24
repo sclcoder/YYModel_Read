@@ -20,11 +20,104 @@
     
     [super viewDidLoad];
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        [self benchmarkGithubUser];
-        [self benchmarkWeiboStatus];
-        
-        [self testRobustness];
+//        [self benchmarkGithubUser];
+//        [self benchmarkWeiboStatus];
+//
+//        [self testRobustness];
     });
+    
+//    [self testNSCharacterSet];
+    
+    [self testBlock];
+}
+
+- (void)testBlock{
+    
+    typedef NSDate* (^YYNSDateParseBlock)(NSString *string);
+    
+    YYNSDateParseBlock blocks[35] = {0};
+    
+    NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+    formatter.locale = [[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"];
+    formatter.timeZone = [NSTimeZone timeZoneForSecondsFromGMT:0];
+    formatter.dateFormat = @"yyyy-MM-dd";
+    blocks[10] = ^(NSString *string) { return [formatter dateFromString:string]; };
+    
+    int i;
+    for (i = 0 ; i < 35; i++) {
+        NSLog(@"%@", blocks[i]);
+    }
+}
+
+- (void)testNSCharacterSet{
+    
+    /**
+     Summary  字符的集合
+     
+     An object representing a fixed set of Unicode character values for use in search operations.
+     Declaration
+     
+     @interface NSCharacterSet : NSObject
+     Discussion
+     
+     An NSCharacterSet object represents a set of Unicode-compliant(顺从的；服从的) characters. NSString and NSScanner objects use NSCharacterSet objects to group characters together for searching operations, so that they can find any of a particular set of characters during a search. The cluster’s(n. 群；簇；丛；串) two public classes, NSCharacterSet and NSMutableCharacterSet, declare the programmatic interface for static and dynamic character sets, respectively.
+     
+     The objects you create using these classes are referred to as character set objects (and when no confusion will result, merely as character sets). Because of the nature of class clusters, character set objects aren’t actual instances of the NSCharacterSet or NSMutableCharacterSet classes but of one of their private subclasses. Although a character set object’s class is private, its interface is public, as declared by these abstract superclasses, NSCharacterSet and NSMutableCharacterSet. The character set classes adopt the NSCopying and NSMutableCopying protocols, making it convenient to convert a character set of one type to the other.
+     
+     The NSCharacterSet class declares the programmatic interface for an object that manages a set of Unicode characters (see the NSString class cluster specification for information on Unicode). NSCharacterSet’s principal primitive method, characterIsMember:, provides the basis for all other instance methods in its interface. A subclass of NSCharacterSet needs only to implement this method, plus mutableCopyWithZone:, for proper behavior. For optimal performance, a subclass should also override bitmapRepresentation, which otherwise works by invoking characterIsMember: for every possible Unicode value.
+     
+     NSCharacterSet is “toll-free bridged” with its Core Foundation counterpart, CFCharacterSetRef. See Toll-Free Bridging for more information on toll-free bridging.
+     
+     Important
+     The Swift overlay to the Foundation framework provides the CharacterSet structure, which bridges to the NSCharacterSet class and its mutable subclass, NSMutableCharacterSet. For more information about value types, see Working with Cocoa Frameworks in Using Swift with Cocoa and Objective-C (Swift 4.1).
+     
+     
+     
+     Summary
+     
+     Returns a character set containing characters with Unicode values in a given range.
+     Declaration
+     
+     + (NSCharacterSet *)characterSetWithRange:(NSRange)aRange;
+     Discussion
+     
+     This code excerpt creates a character set object containing the lowercase English alphabetic characters:
+     NSRange lcEnglishRange;
+     NSCharacterSet *lcEnglishLetters;
+     
+     lcEnglishRange.location = (unsigned int)'a';
+     lcEnglishRange.length = 26;
+     lcEnglishLetters = [NSCharacterSet characterSetWithRange:lcEnglishRange];
+     
+     Parameters
+     
+     aRange
+     A range of Unicode values.
+     aRange.location is the value of the first character to return; aRange.location + aRange.length– 1 is the value of the last.
+     Returns
+     
+     A character set containing characters whose Unicode values are given by aRange. If aRange.length is 0, returns an empty character set.
+
+     */
+    
+    NSRange lcEnglishRange;
+    NSCharacterSet *lcEnglishLetters;
+    
+    lcEnglishRange.location = (unsigned int)'a';
+    lcEnglishRange.length = 26;
+    // 存放26个小写字母的集合
+    lcEnglishLetters = [NSCharacterSet characterSetWithRange:lcEnglishRange];
+    NSLog(@"%d",[lcEnglishLetters characterIsMember:'z']);
+    
+    NSCharacterSet *set = [NSCharacterSet characterSetWithCharactersInString:@"0123456789"];
+    NSString *str = @"7sjf78sf990s";
+    NSLog(@"originSet:%@, afterSet:%@",set,[str componentsSeparatedByCharactersInSet:set]);
+    
+    NSCharacterSet *invertedSet = [[NSCharacterSet characterSetWithCharactersInString:@"0123456789"] invertedSet];
+    NSLog(@"invertedSet----%@",[str componentsSeparatedByCharactersInSet:invertedSet]);
+    
+//【可以看出invertedSet后，刚好判断条件相反】
+
 }
 
 

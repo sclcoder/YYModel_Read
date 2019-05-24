@@ -157,12 +157,13 @@ static force_inline NSNumber *YYNSNumberCreateFromID(__unsafe_unretained id valu
 static force_inline NSDate *YYNSDateFromString(__unsafe_unretained NSString *string) {
     typedef NSDate* (^YYNSDateParseBlock)(NSString *string);
     #define kParserNum 34
+    // 存放YYNSDateParseBlock类型的数组 为什么使用34这个大小?时间格式的字符串最大是34,下面的有例子
     static YYNSDateParseBlock blocks[kParserNum + 1] = {0};
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         {
             /*
-             2014-01-20  // Google
+             2014-01-20  // Google  传入的字符串长度是10
              */
             NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
             formatter.locale = [[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"];
@@ -242,7 +243,7 @@ static force_inline NSDate *YYNSDateFromString(__unsafe_unretained NSString *str
         {
             /*
              Fri Sep 04 00:12:21 +0800 2015 // Weibo, Twitter
-             Fri Sep 04 00:12:21.000 +0800 2015
+             Fri Sep 04 00:12:21.000 +0800 2015  // 传入的字符串长度是34
              */
             NSDateFormatter *formatter = [NSDateFormatter new];
             formatter.locale = [[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"];
@@ -258,6 +259,7 @@ static force_inline NSDate *YYNSDateFromString(__unsafe_unretained NSString *str
     });
     if (!string) return nil;
     if (string.length > kParserNum) return nil;
+    // 通过传入字符串的长度确定其对应的block
     YYNSDateParseBlock parser = blocks[string.length];
     if (!parser) return nil;
     return parser(string);
