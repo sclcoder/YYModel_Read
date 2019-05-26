@@ -17,10 +17,8 @@ YYEncodingType YYEncodingGetType(const char *typeEncoding) {
     
     char *type = (char *)typeEncoding;
     if (!type) return YYEncodingTypeUnknown;
-    // size_t 这个类型可移植性更好
     size_t len = strlen(type);
     if (len == 0) return YYEncodingTypeUnknown;
-    
     // 用qualifier(修饰语)来确定当前type的encode
     YYEncodingType qualifier = 0;
     bool prefix = true;
@@ -185,7 +183,7 @@ YYEncodingType YYEncodingGetType(const char *typeEncoding) {
                         if ([scanner scanUpToCharactersFromSet: [NSCharacterSet characterSetWithCharactersInString:@"\"<"] intoString:&clsName]) {
                             if (clsName.length) _cls = objc_getClass(clsName.UTF8String);
                         }
-                        
+                        // 属性遵守的协议？
                         NSMutableArray *protocols = nil;
                         while ([scanner scanString:@"<" intoString:NULL]) {
                             NSString* protocol = nil;
@@ -351,6 +349,7 @@ YYEncodingType YYEncodingGetType(const char *typeEncoding) {
         [info _update];
     }
     dispatch_semaphore_signal(lock);
+    // info不存在才创建YYClassInfo 优先去缓存中找
     if (!info) {
         info = [[YYClassInfo alloc] initWithClass:cls];
         if (info) {

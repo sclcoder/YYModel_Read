@@ -20,15 +20,64 @@
     
     [super viewDidLoad];
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-//        [self benchmarkGithubUser];
+        [self benchmarkGithubUser];
 //        [self benchmarkWeiboStatus];
 //
 //        [self testRobustness];
     });
     
-//    [self testNSCharacterSet];
     
-    [self testBlock];
+//    [self pointTest];
+}
+
+- (void)pointTest{
+    //    [self testNSCharacterSet];
+    //    [self testBlock];
+    [self testScanner];
+}
+
+- (void)testScanner{
+    
+    // 每次扫描成功scanLocation会移动到匹配的下一个位置,失败则不移动
+    int value;
+    NSString *string = @"A123B456a789";
+    NSScanner *scanner = [NSScanner scannerWithString:string];
+    scanner.charactersToBeSkipped = [NSCharacterSet uppercaseLetterCharacterSet];    // 跳过所有大写字母
+//    scanner.charactersToBeSkipped = [NSCharacterSet characterSetWithCharactersInString:@"ABa"];    // 指定字符集合
+    
+    while (![scanner isAtEnd]) {
+        // 扫描出数字
+        NSLog(@"%zd",scanner.scanLocation);
+        BOOL result = [scanner scanInt:&value];
+        if (!result) break;
+        NSLog(@"scanner-result:%d,value:%d",result,value);
+        NSLog(@"%zd",scanner.scanLocation);
+        /**
+         2019-05-25 18:21:49.099061+0800 YYModel_Read[10724:505331] 0
+         2019-05-25 18:21:49.099189+0800 YYModel_Read[10724:505331] scanner-result:1,value:123
+         2019-05-25 18:21:49.099249+0800 YYModel_Read[10724:505331] 4
+         2019-05-25 18:21:49.099309+0800 YYModel_Read[10724:505331] 4
+         2019-05-25 18:21:49.099391+0800 YYModel_Read[10724:505331] scanner-result:1,value:456
+         2019-05-25 18:21:49.099468+0800 YYModel_Read[10724:505331] 8
+         */
+    }
+    NSScanner *scanner2 = [NSScanner scannerWithString:@"#ff0fa1"];
+    NSCharacterSet *hexadecimalCharacterSet = [NSCharacterSet characterSetWithCharactersInString:@"0123456789abcdefABCDEF"];
+    NSString *colorString = NULL;
+    
+    NSLog(@"%zd",scanner2.scanLocation);
+    // 扫描指定的字符串: 成功后scanLocation移动位置
+    BOOL start = [scanner2 scanString:@"#" intoString:NULL];
+    NSLog(@"%zd",scanner2.scanLocation);
+    
+    if (start && [scanner2 scanCharactersFromSet:hexadecimalCharacterSet intoString:&colorString] && colorString.length == 6) {
+        NSLog(@"%@",colorString);
+    }
+    /**
+     2019-05-25 19:29:48.492832+0800 YYModel_Read[11557:549469] 0
+     2019-05-25 19:29:48.492915+0800 YYModel_Read[11557:549469] 1
+     2019-05-25 19:29:48.493038+0800 YYModel_Read[11557:549469] ff0fa1
+     */
 }
 
 - (void)testBlock{
@@ -126,7 +175,7 @@
     
     
     printf("----------------------\n");
-    printf("Benchmark (10000 times):\n");
+    printf("Benchmark (1 times):\n");
     printf("GHUser             from json    to json    archive\n");
     
     /// get json data
@@ -136,7 +185,7 @@
     
     
     /// Benchmark
-    int count = 10000;
+    int count = 1;
     NSTimeInterval begin, end;
     
     /// warm up (NSDictionary's hot cache, and JSON to model framework cache)
@@ -285,6 +334,9 @@
     printf("----------------------\n");
     printf("\n");
 }
+
+
+
 
 - (void)benchmarkWeiboStatus {
     printf("----------------------\n");
