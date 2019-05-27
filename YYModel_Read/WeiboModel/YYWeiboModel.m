@@ -97,6 +97,7 @@ YYModelSynthCoderAndHash
 @end
 
 @implementation YYWeiboStatus
+
 + (NSDictionary *)modelCustomPropertyMapper {
     return @{@"statusID" : @"id",
              @"createdAt" : @"created_at",
@@ -117,7 +118,9 @@ YYModelSynthCoderAndHash
              @"darwinTags" : @"darwin_tags",
              @"userType" : @"userType",
              @"picInfos" : @"pic_infos",
-             @"inReplyToUserId" : @"in_reply_to_user_id"};
+             @"inReplyToUserId" : @"in_reply_to_user_id",
+             //             @"bmiddlePic" : @"bmiddle_pic" scl:添加
+             };
 }
 + (NSDictionary *)modelContainerPropertyGenericClass {
     return @{@"picIds" : [NSString class],

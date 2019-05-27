@@ -110,6 +110,9 @@
 @end
 
 @interface YYWeiboStatus : NSObject <NSCoding, NSCopying>
+
+//@property(nonatomic,strong) NSURL *bmiddlePic; scl: 添加
+
 @property (nonatomic, assign) uint64_t statusID;
 @property (nonatomic, strong) NSString *idstr;
 @property (nonatomic, strong) NSString *mid;

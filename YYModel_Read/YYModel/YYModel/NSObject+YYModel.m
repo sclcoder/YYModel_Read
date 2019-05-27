@@ -313,6 +313,7 @@ static force_inline NSDateFormatter *YYISODateFormatter() {
 /// The dic should be NSDictionary, and the keyPath should not be nil.
 static force_inline id YYValueForKeyPath(__unsafe_unretained NSDictionary *dic, __unsafe_unretained NSArray *keyPaths) {
     id value = nil;
+    // 获取最终的值
     for (NSUInteger i = 0, max = keyPaths.count; i < max; i++) {
         value = dic[keyPaths[i]];
         if (i + 1 < max) {
@@ -331,11 +332,11 @@ static force_inline id YYValueForKeyPath(__unsafe_unretained NSDictionary *dic, 
 static force_inline id YYValueForMultiKeys(__unsafe_unretained NSDictionary *dic, __unsafe_unretained NSArray *multiKeys) {
     id value = nil;
     for (NSString *key in multiKeys) {
-        if ([key isKindOfClass:[NSString class]]) {
+        if ([key isKindOfClass:[NSString class]]) { // key是NSString
             value = dic[key];
-            if (value) break;
+            if (value) break; // 有值 跳出循环,没有值就继续遍历
         } else {
-            value = YYValueForKeyPath(dic, (NSArray *)key);
+            value = YYValueForKeyPath(dic, (NSArray *)key); // key是NSArray keyPath的情况
             if (value) break;
         }
     }
@@ -582,7 +583,7 @@ static force_inline id YYValueForMultiKeys(__unsafe_unretained NSDictionary *dic
     
     // create mapper
     // mapper:最终存放_YYModelPropertyMeta的字典
-    // 如果有自定义个属性映射modelCustomPropertyMapper
+    // 如果有自定义属性映射modelCustomPropertyMapper,操作如下:
     // key是propertyMeta->_mappedToKey(用用户自定义的mappedToKey 代替propertyName) value是_YYModelPropertyMeta
     NSMutableDictionary *mapper = [NSMutableDictionary new];
     NSMutableArray *keyPathPropertyMetas = [NSMutableArray new];
@@ -594,37 +595,20 @@ static force_inline id YYValueForMultiKeys(__unsafe_unretained NSDictionary *dic
             _YYModelPropertyMeta *propertyMeta = allPropertyMetas[propertyName];
             if (!propertyMeta) return;
             [allPropertyMetas removeObjectForKey:propertyName];
-            
-            if ([mappedToKey isKindOfClass:[NSString class]]) {
+            /**
+             + (NSDictionary *)modelCustomPropertyMapper {
+                 return @{@"name"  : @"n",
+                 @"page"  : @"p",
+                 @"desc"  : @"ext.desc",
+                 @"bookID": @[@"id", @"ID", @"book_id"]}; 
+             }
+             */
+            if ([mappedToKey isKindOfClass:[NSString class]]) { //  @"p" 或  @"ext.desc" 的场景
                 if (mappedToKey.length == 0) return;
                 
-                propertyMeta->_mappedToKey = mappedToKey;
-                NSArray *keyPath = [mappedToKey componentsSeparatedByString:@"."];
+                propertyMeta->_mappedToKey = mappedToKey; // 如@"ext.desc",
+                NSArray *keyPath = [mappedToKey componentsSeparatedByString:@"."]; // @[@"ext",@"desc"]
                 for (NSString *onePath in keyPath) {
-                    
-                    /**
-                     Summary
-                     
-                     Returns an array containing substrings from the receiver that have been divided by a given separator.
-                     Declaration
-                     
-                     - (NSArray<NSString *> *)componentsSeparatedByString:(NSString *)separator;
-                     Discussion
-                     
-                     The substrings in the array appear in the order they did in the receiver. Adjacent occurrences of the separator string produce empty strings in the result. Similarly, if the string begins or ends with the separator, the first or last substring, respectively, is empty. For example, this code fragment:
-                     NSString *list = @"Karin, Carrie, David";
-                     NSArray *listItems = [list componentsSeparatedByString:@", "];
-                     produces the array @[@"Karin", @"Carrie", @"David"].
-                     If list begins with a comma and space—for example, @", Norman, Stanley, Fletcher"—the array has these contents: @[@"", @"Norman", @"Stanley", @"Fletcher"].
-                     If list has no separators—for example, @"Karin"—the array contains the string itself, in this case @[@"Karin"].
-                     Parameters
-                     
-                     separator
-                     The separator string.
-                     Returns
-                     
-                     An NSArray object containing substrings from the receiver that have been divided by separator.
-                     */
                     //  容错处理 可能分割成这种情况 @[@"", @"Norman", @"Stanley", @"Fletcher"]
                     if (onePath.length == 0) {
                         NSMutableArray *tmp = keyPath.mutableCopy;
@@ -633,28 +617,28 @@ static force_inline id YYValueForMultiKeys(__unsafe_unretained NSDictionary *dic
                         break;
                     }
                 }
-                if (keyPath.count > 1) {
+                if (keyPath.count > 1) { // count大于1才设置 如@[@"ext",@"desc"]
                     propertyMeta->_mappedToKeyPath = keyPath;
-                    [keyPathPropertyMetas addObject:propertyMeta];
+                    [keyPathPropertyMetas addObject:propertyMeta]; // 记录keyPath的propertyMeta
                 }
-                propertyMeta->_next = mapper[mappedToKey] ?: nil;
-                mapper[mappedToKey] = propertyMeta; // 多个属性映射同一个key,mapper中的propertyMeta会被覆盖,通过_next指针链记录了被覆盖的属性
+                // 多个属性映射同一个key,mapper中的propertyMeta会被覆盖,通过_next指针链记录了被覆盖的属性
+                propertyMeta->_next = mapper[mappedToKey] ?: nil; // 通过next记录上一个propertyMeta
+                mapper[mappedToKey] = propertyMeta;
                 
-            } else if ([mappedToKey isKindOfClass:[NSArray class]]) {
-                // mappedToKey是数组: 这是什么场景呢??????
+            } else if ([mappedToKey isKindOfClass:[NSArray class]]) { // @"bookID": @[@"id", @"ID", @"book_id"]};
                 NSMutableArray *mappedToKeyArray = [NSMutableArray new];
                 for (NSString *oneKey in ((NSArray *)mappedToKey)) {
-                    if (![oneKey isKindOfClass:[NSString class]]) continue;
-                    if (oneKey.length == 0) continue;
+                    if (![oneKey isKindOfClass:[NSString class]]) continue; // 非NSString
+                    if (oneKey.length == 0) continue; // 空串
                     
-                    NSArray *keyPath = [oneKey componentsSeparatedByString:@"."];
+                    NSArray *keyPath = [oneKey componentsSeparatedByString:@"."]; // 有keyPath
                     if (keyPath.count > 1) {
                         [mappedToKeyArray addObject:keyPath];
                     } else {
                         [mappedToKeyArray addObject:oneKey];
                     }
                     
-                    if (!propertyMeta->_mappedToKey) {
+                    if (!propertyMeta->_mappedToKey) { // 记录第一个?
                         propertyMeta->_mappedToKey = oneKey;
                         propertyMeta->_mappedToKeyPath = keyPath.count > 1 ? keyPath : nil;
                     }
@@ -662,7 +646,7 @@ static force_inline id YYValueForMultiKeys(__unsafe_unretained NSDictionary *dic
                 if (!propertyMeta->_mappedToKey) return;
                 
                 propertyMeta->_mappedToKeyArray = mappedToKeyArray;
-                [multiKeysPropertyMetas addObject:propertyMeta];
+                [multiKeysPropertyMetas addObject:propertyMeta]; //  mapped to multi keys.
                 
                 propertyMeta->_next = mapper[mappedToKey] ?: nil;
                 mapper[mappedToKey] = propertyMeta;
@@ -855,13 +839,13 @@ static void ModelSetValueForProperty(__unsafe_unretained id model,
                                      __unsafe_unretained id value,
                                      __unsafe_unretained _YYModelPropertyMeta *meta) {
     if (meta->_isCNumber) {
-        NSNumber *num = YYNSNumberCreateFromID(value);
+        NSNumber *num = YYNSNumberCreateFromID(value); // 如 value是@"YES" 转换后 @(YES)
         // 属性是CNumber(非OC对象)
         ModelSetNumberToProperty(model, num, meta);
         if (num) [num class]; // hold the number
-    } else if (meta->_nsType) { // 是OC对象类型
+    } else if (meta->_nsType) { // property's Foundation type 注意:自定义类型不算
         if (value == (id)kCFNull) {
-            ((void (*)(id, SEL, id))(void *) objc_msgSend)((id)model, meta->_setter, (id)nil); // 是OC对象类型且value是空值h时赋值为nil。
+            ((void (*)(id, SEL, id))(void *) objc_msgSend)((id)model, meta->_setter, (id)nil); // 是OC对象类型且value是空值时赋值为nil。
         } else {
             switch (meta->_nsType) {
                 case YYEncodingTypeNSString:
@@ -978,31 +962,33 @@ static void ModelSetValueForProperty(__unsafe_unretained id model,
                 case YYEncodingTypeNSArray:
                 case YYEncodingTypeNSMutableArray: {
                     // 属性是NSArray\NSMutableArray的情况
-                    // TODO: 待看
-                    if (meta->_genericCls) {
+                    //
+                    if (meta->_genericCls) { // 有指定的_genericCls
                         NSArray *valueArr = nil;
                         if ([value isKindOfClass:[NSArray class]]) valueArr = value;
                         else if ([value isKindOfClass:[NSSet class]]) valueArr = ((NSSet *)value).allObjects;
                         if (valueArr) {
                             NSMutableArray *objectArr = [NSMutableArray new];
                             for (id one in valueArr) {
-                                if ([one isKindOfClass:meta->_genericCls]) {
+                                if ([one isKindOfClass:meta->_genericCls]) { // 数组元素类型与属性指定的_genericCls一致(如:都是NSString)
                                     [objectArr addObject:one];
-                                } else if ([one isKindOfClass:[NSDictionary class]]) {
+                                } else if ([one isKindOfClass:[NSDictionary class]]) { // 数组元素是否是字典类型(此时属性往往是自定义类型)
                                     Class cls = meta->_genericCls;
                                     if (meta->_hasCustomClassFromDictionary) {
-                                        cls = [cls modelCustomClassForDictionary:one];
+                                        cls = [cls modelCustomClassForDictionary:one]; // 针对该属性指定的类型 没有则使用_genericCls类型
                                         if (!cls) cls = meta->_genericCls; // for xcode code coverage
                                     }
                                     NSObject *newOne = [cls new];
-                                    [newOne yy_modelSetWithDictionary:one];
-                                    if (newOne) [objectArr addObject:newOne];
+                                    [newOne yy_modelSetWithDictionary:one]; // 递归操作
+                                    if (newOne) [objectArr addObject:newOne]; // objectArr临时存放转换完成的数据
                                 }
                             }
+                            // 该属性赋值完毕
                             ((void (*)(id, SEL, id))(void *) objc_msgSend)((id)model, meta->_setter, objectArr);
                         }
-                    } else {
+                    } else { // 没有指定的_genericCls
                         if ([value isKindOfClass:[NSArray class]]) {
+                            // array赋值给属性
                             if (meta->_nsType == YYEncodingTypeNSArray) {
                                 ((void (*)(id, SEL, id))(void *) objc_msgSend)((id)model, meta->_setter, value);
                             } else {
@@ -1011,6 +997,7 @@ static void ModelSetValueForProperty(__unsafe_unretained id model,
                                                                                ((NSArray *)value).mutableCopy);
                             }
                         } else if ([value isKindOfClass:[NSSet class]]) {
+                            // set转array赋值给属性
                             if (meta->_nsType == YYEncodingTypeNSArray) {
                                 ((void (*)(id, SEL, id))(void *) objc_msgSend)((id)model, meta->_setter, ((NSSet *)value).allObjects);
                             } else {
@@ -1025,22 +1012,25 @@ static void ModelSetValueForProperty(__unsafe_unretained id model,
                 case YYEncodingTypeNSDictionary:
                 case YYEncodingTypeNSMutableDictionary: {
                     // 属性是NSDictionary\NSMutableDictionary的情况
-                    // TODO: 待看
                     if ([value isKindOfClass:[NSDictionary class]]) {
-                        if (meta->_genericCls) {
+                        if (meta->_genericCls) { //container's generic class, or nil if threr's no generic class
                             NSMutableDictionary *dic = [NSMutableDictionary new];
                             [((NSDictionary *)value) enumerateKeysAndObjectsUsingBlock:^(NSString *oneKey, id oneValue, BOOL *stop) {
+                                // 如果字典中还字典(oneValue是字典类型): 判断是否有针对字典(oneValue)映射的类
                                 if ([oneValue isKindOfClass:[NSDictionary class]]) {
                                     Class cls = meta->_genericCls;
+                                    // to create instances of different classes during json->object transform
                                     if (meta->_hasCustomClassFromDictionary) {
+                                        // 自定义的映射类,如果没有就使用_genericCls
                                         cls = [cls modelCustomClassForDictionary:oneValue];
                                         if (!cls) cls = meta->_genericCls; // for xcode code coverage
                                     }
-                                    NSObject *newOne = [cls new];
+                                    NSObject *newOne = [cls new]; // 新的对象类型,递归继续转换
                                     [newOne yy_modelSetWithDictionary:(id)oneValue];
-                                    if (newOne) dic[oneKey] = newOne;
+                                    if (newOne) dic[oneKey] = newOne; // dic和遍历的value对应,不过dic存放的都是转换完成的值
                                 }
                             }];
+                            // 属性赋值,该属性转换结束
                             ((void (*)(id, SEL, id))(void *) objc_msgSend)((id)model, meta->_setter, dic);
                         } else {
                             if (meta->_nsType == YYEncodingTypeNSDictionary) {
@@ -1057,7 +1047,7 @@ static void ModelSetValueForProperty(__unsafe_unretained id model,
                 case YYEncodingTypeNSSet:
                 case YYEncodingTypeNSMutableSet: {
                     // 属性是NSSet\NSMutableSet的情况
-                    // TODO: 待看
+                    // 与 Array\Dic 大同小异
                     NSSet *valueSet = nil;
                     if ([value isKindOfClass:[NSArray class]]) valueSet = [NSMutableSet setWithArray:value];
                     else if ([value isKindOfClass:[NSSet class]]) valueSet = ((NSSet *)value);
@@ -1095,8 +1085,9 @@ static void ModelSetValueForProperty(__unsafe_unretained id model,
         }
     } else {
         BOOL isNull = (value == (id)kCFNull);
+        // 注意此处进行判断的是 property's type 不是 property's Foundation type
         switch (meta->_type & YYEncodingTypeMask) {
-            case YYEncodingTypeObject: {
+            case YYEncodingTypeObject: { // YYEncodingTypeObject = 14, ///< id OC对象类型
                 if (isNull) {
                     ((void (*)(id, SEL, id))(void *) objc_msgSend)((id)model, meta->_setter, (id)nil);
                 } else if ([value isKindOfClass:meta->_cls] || !meta->_cls) {
@@ -1104,6 +1095,7 @@ static void ModelSetValueForProperty(__unsafe_unretained id model,
                 } else if ([value isKindOfClass:[NSDictionary class]]) {
                     NSObject *one = nil;
                     if (meta->_getter) {
+                        // 为什么如此操作?? 什么场景one会有值?
                         one = ((id (*)(id, SEL))(void *) objc_msgSend)((id)model, meta->_getter);
                     }
                     if (one) {
@@ -1121,13 +1113,13 @@ static void ModelSetValueForProperty(__unsafe_unretained id model,
                 }
             } break;
                 
-            case YYEncodingTypeClass: {
+            case YYEncodingTypeClass: { // Class 类型
                 if (isNull) {
                     ((void (*)(id, SEL, Class))(void *) objc_msgSend)((id)model, meta->_setter, (Class)NULL);
                 } else {
                     Class cls = nil;
                     if ([value isKindOfClass:[NSString class]]) {
-                        cls = NSClassFromString(value);
+                        cls = NSClassFromString(value); // NSString 转换为 Class
                         if (cls) {
                             ((void (*)(id, SEL, Class))(void *) objc_msgSend)((id)model, meta->_setter, (Class)cls);
                         }
@@ -1142,19 +1134,19 @@ static void ModelSetValueForProperty(__unsafe_unretained id model,
                 }
             } break;
                 
-            case  YYEncodingTypeSEL: {
+            case  YYEncodingTypeSEL: { // SEL类型
                 if (isNull) {
                     ((void (*)(id, SEL, SEL))(void *) objc_msgSend)((id)model, meta->_setter, (SEL)NULL);
                 } else if ([value isKindOfClass:[NSString class]]) {
-                    SEL sel = NSSelectorFromString(value);
+                    SEL sel = NSSelectorFromString(value); // NSString转换为SEL
                     if (sel) ((void (*)(id, SEL, SEL))(void *) objc_msgSend)((id)model, meta->_setter, (SEL)sel);
                 }
             } break;
                 
-            case YYEncodingTypeBlock: {
+            case YYEncodingTypeBlock: { // Block类型
                 if (isNull) {
                     ((void (*)(id, SEL, void (^)()))(void *) objc_msgSend)((id)model, meta->_setter, (void (^)())NULL);
-                } else if ([value isKindOfClass:YYNSBlockClass()]) {
+                } else if ([value isKindOfClass:YYNSBlockClass()]) { // YYNSBlockClass()获取NSBlock
                     ((void (*)(id, SEL, void (^)()))(void *) objc_msgSend)((id)model, meta->_setter, (void (^)())value);
                 }
             } break;
@@ -1162,6 +1154,17 @@ static void ModelSetValueForProperty(__unsafe_unretained id model,
             case YYEncodingTypeStruct:
             case YYEncodingTypeUnion:
             case YYEncodingTypeCArray: {
+                /**
+                 NSValue Summary
+                 
+                 A simple container for a single C or Objective-C data item.
+                 Declaration
+                 
+                 @interface NSValue : NSObject
+                 Discussion
+                 
+                 An NSValue object can hold any of the scalar types such as int, float, and char, as well as pointers, structures, and object id references. Use this class to work with such data types in collections (such as NSArray and NSSet), Key-value coding, and other APIs that require Objective-C objects. NSValue objects are always immutable.
+                 */
                 if ([value isKindOfClass:[NSValue class]]) {
                     const char *valueType = ((NSValue *)value).objCType;
                     const char *metaType = meta->_info.typeEncoding.UTF8String;
@@ -1203,15 +1206,20 @@ typedef struct {
  @param _context _context.modelMeta and _context.model should not be nil.
  */
 static void ModelSetWithDictionaryFunction(const void *_key, const void *_value, void *_context) {
+ /**
+    model的属性个数多于(等于)dic中的key的个数: 通过dic中的key来获取属性并赋值为dic中对应的value。
+    场景:多个属性映射同一个key的情况
+  */
     ModelSetContext *context = _context;
     __unsafe_unretained _YYModelMeta *meta = (__bridge _YYModelMeta *)(context->modelMeta);
     __unsafe_unretained _YYModelPropertyMeta *propertyMeta = [meta->_mapper objectForKey:(__bridge id)(_key)];
     __unsafe_unretained id model = (__bridge id)(context->model);
-    while (propertyMeta) {
+    while (propertyMeta) { // 1.从meta->_mapper中取到的propertyMeta可能为空 2.propertyMeta->next为空
         if (propertyMeta->_setter) {
+            // 给model的属性赋值
             ModelSetValueForProperty(model, (__bridge __unsafe_unretained id)_value, propertyMeta);
         }
-        propertyMeta = propertyMeta->_next; // 沿着链表查找下一个属性:多个属性可能设置同一个值的情况
+        propertyMeta = propertyMeta->_next; // 沿着链表查找下一个属性:多个属性映射同一个key
     };
 }
 
@@ -1222,6 +1230,28 @@ static void ModelSetWithDictionaryFunction(const void *_key, const void *_value,
  @param _context      _context.model and _context.dictionary should not be nil.
  */
 static void ModelSetWithPropertyMetaArrayFunction(const void *_propertyMeta, void *_context) {
+    // model的属性个数少于dic中的key的个数: 根据属性的信息获取dictionary中的值并赋值
+
+    /** 映射的例子
+     + (NSDictionary *)modelCustomPropertyMapper {
+         return @{@"name"  : @"n",
+         @"page"  : @"p",
+         @"desc"  : @"ext.desc",
+         @"bookID": @[@"id", @"ID", @"book_id"]};
+     }
+     
+     property与key的映射情况: _YYModelPropertyMeta中的说明
+     
+     1.p对key一对一映射   @"page"  : @"p"
+        property->key:       _mappedToKey:key     _mappedToKeyPath:nil            _mappedToKeyArray:nil
+     
+     2.p对keyPath映射:   @"desc"  : @"ext.desc"
+        property->keyPath:   _mappedToKey:keyPath _mappedToKeyPath:keyPath(array) _mappedToKeyArray:nil
+     
+     3.p对key一对多映射:  @"bookID": @[@"id", @"ID", @"book_id"]
+        property->keys:      _mappedToKey:keys[0] _mappedToKeyPath:nil/keyPath    _mappedToKeyArray:keys(array)
+     
+     */
     ModelSetContext *context = _context;
     __unsafe_unretained NSDictionary *dictionary = (__bridge NSDictionary *)(context->dictionary);
     __unsafe_unretained _YYModelPropertyMeta *propertyMeta = (__bridge _YYModelPropertyMeta *)(_propertyMeta);
@@ -1229,15 +1259,19 @@ static void ModelSetWithPropertyMetaArrayFunction(const void *_propertyMeta, voi
     id value = nil;
     
     if (propertyMeta->_mappedToKeyArray) {
+        // property->keys
         value = YYValueForMultiKeys(dictionary, propertyMeta->_mappedToKeyArray);
     } else if (propertyMeta->_mappedToKeyPath) {
+        // property->keyPath
         value = YYValueForKeyPath(dictionary, propertyMeta->_mappedToKeyPath);
     } else {
+        //  property->key: 一对一映射
         value = [dictionary objectForKey:propertyMeta->_mappedToKey];
     }
     
     if (value) {
         __unsafe_unretained id model = (__bridge id)(context->model);
+        // 给model的属性赋值
         ModelSetValueForProperty(model, value, propertyMeta);
     }
 }
@@ -1531,6 +1565,7 @@ static NSString *ModelDescription(NSObject *model) {
 
 
 + (NSDictionary *)_yy_dictionaryWithJSON:(id)json {
+    // 部分发现: 在json转为字典后 json中的bool值true\false在字典中为YES\NO
     if (!json || json == (id)kCFNull) return nil;
     NSDictionary *dic = nil;
     NSData *jsonData = nil;
@@ -1558,7 +1593,10 @@ static NSString *ModelDescription(NSObject *model) {
     if (![dictionary isKindOfClass:[NSDictionary class]]) return nil;
     
     Class cls = [self class];
-    // 相比YYClassInfo中的纯净的原始信息,_YYModelMeta中更加具体,针对具体模型高度定制化
+    /**
+        相比YYClassInfo中的纯净的原始信息,_YYModelMeta中更加具体,属性信息更加丰富
+        _YYModelMeta的创建过程中会递归创建YYClassInfo信息。所以_YYModelMeta对象中的属性包括继承的属性
+     */
     _YYModelMeta *modelMeta = [_YYModelMeta metaWithClass:cls];
     // TODO: modelCustomClassForDictionary
     if (modelMeta->_hasCustomClassFromDictionary) {
@@ -1587,31 +1625,33 @@ static NSString *ModelDescription(NSObject *model) {
         dic = [((id<YYModel>)self) modelCustomWillTransformFromDictionary:dic]; // 转换前的回调
         if (![dic isKindOfClass:[NSDictionary class]]) return NO;
     }
+    
     // 转换开始
-    // TODO:为什么要用结构体呢??
+    // 这个结构体包含的信息: _YYModelMeta id(self) NSDictionary(json)
     ModelSetContext context = {0};
     context.modelMeta = (__bridge void *)(modelMeta);
     context.model = (__bridge void *)(self);
     context.dictionary = (__bridge void *)(dic);
     
-    // _keyMappedCount大于dic中元素个数的含义?? 代表什么呢
+    // 为什么要判断_keyMappedCount大于dic中元素个数? 属性多就从dic中开始处理; 属性少就从model的属性数组开始处理。这样做可以避免一些条件判断。
     if (modelMeta->_keyMappedCount >= CFDictionaryGetCount((CFDictionaryRef)dic)) {
-        // Calls a function once for each value in the dictionary.
+        // Calls a function once for each value in the dictionary.  传入的dictionary是dic(json数据)
         CFDictionaryApplyFunction((CFDictionaryRef)dic, ModelSetWithDictionaryFunction, &context); // model的属性赋值
-        
-        if (modelMeta->_keyPathPropertyMetas) {
+        // 结合_YYModelMeta的初始化分析一下的情况
+        if (modelMeta->_keyPathPropertyMetas) { // property meta which is mapped to a key path
             CFArrayApplyFunction((CFArrayRef)modelMeta->_keyPathPropertyMetas,
                                  CFRangeMake(0, CFArrayGetCount((CFArrayRef)modelMeta->_keyPathPropertyMetas)),
                                  ModelSetWithPropertyMetaArrayFunction,
                                  &context);
         }
-        if (modelMeta->_multiKeysPropertyMetas) {
+        if (modelMeta->_multiKeysPropertyMetas) {  // property meta which is mapped to multi keys.
             CFArrayApplyFunction((CFArrayRef)modelMeta->_multiKeysPropertyMetas,
                                  CFRangeMake(0, CFArrayGetCount((CFArrayRef)modelMeta->_multiKeysPropertyMetas)),
                                  ModelSetWithPropertyMetaArrayFunction,
                                  &context);
         }
     } else {
+        // Calls a function once for each value in the array. 传入的数组是modelMeta->_allPropertyMetas(model的所有属性)
         CFArrayApplyFunction((CFArrayRef)modelMeta->_allPropertyMetas,
                              CFRangeMake(0, modelMeta->_keyMappedCount),
                              ModelSetWithPropertyMetaArrayFunction,

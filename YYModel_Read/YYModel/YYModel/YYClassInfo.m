@@ -118,24 +118,35 @@ YYEncodingType YYEncodingGetType(const char *typeEncoding) {
 @end
 
 @implementation YYClassMethodInfo
+/**
+ @property (nonatomic, assign, readonly) Method method;                  ///< method opaque struct
+ @property (nonatomic, strong, readonly) NSString *name;                 ///< method name
+ @property (nonatomic, assign, readonly) SEL sel;                        ///< method's selector
+ @property (nonatomic, assign, readonly) IMP imp;                        ///< method's implementation
+ @property (nonatomic, strong, readonly) NSString *typeEncoding;         ///< method's parameter and return types
+ @property (nonatomic, strong, readonly) NSString *returnTypeEncoding;   ///< return value's type
+ @property (nullable, nonatomic, strong, readonly) NSArray<NSString *> *argumentTypeEncodings; ///< array of arguments' type
+ */
 
 - (instancetype)initWithMethod:(Method)method {
     if (!method) return nil;
     self = [super init];
-    _method = method;
-    _sel = method_getName(method);
-    _imp = method_getImplementation(method);
+    _method = method; // method opaque struct
+    _sel = method_getName(method); // method's selector
+    _imp = method_getImplementation(method); // method's implementation
     const char *name = sel_getName(_sel);
     if (name) {
-        _name = [NSString stringWithUTF8String:name];
+        _name = [NSString stringWithUTF8String:name]; // method name
     }
+    // Returns a string describing a method's parameter and return types.
     const char *typeEncoding = method_getTypeEncoding(method);
     if (typeEncoding) {
-        _typeEncoding = [NSString stringWithUTF8String:typeEncoding];
+        _typeEncoding = [NSString stringWithUTF8String:typeEncoding]; // method's parameter and return types
     }
+    // Returns a string describing a method's return type.
     char *returnType = method_copyReturnType(method);
     if (returnType) {
-        _returnTypeEncoding = [NSString stringWithUTF8String:returnType];
+        _returnTypeEncoding = [NSString stringWithUTF8String:returnType]; // return value's type
         free(returnType);
     }
     unsigned int argumentCount = method_getNumberOfArguments(method);
@@ -147,7 +158,7 @@ YYEncodingType YYEncodingGetType(const char *typeEncoding) {
             [argumentTypes addObject:type ? type : @""];
             if (argumentType) free(argumentType);
         }
-        _argumentTypeEncodings = argumentTypes;
+        _argumentTypeEncodings = argumentTypes; // array of arguments' type
     }
     return self;
 }
@@ -270,8 +281,10 @@ YYEncodingType YYEncodingGetType(const char *typeEncoding) {
         _metaCls = objc_getMetaClass(class_getName(cls));
     }
     _name = NSStringFromClass(cls);
+    
+    // 获取(更新)classInfo
     [self _update];
-
+    // 获取父类的classInfo:这里有个递归操作,结束条件为cls为空
     _superClassInfo = [self.class classInfoWithClass:_superCls];
     return self;
 }
@@ -286,7 +299,7 @@ YYEncodingType YYEncodingGetType(const char *typeEncoding) {
     Method *methods = class_copyMethodList(cls, &methodCount);
     if (methods) {
         NSMutableDictionary *methodInfos = [NSMutableDictionary new];
-        _methodInfos = methodInfos;
+        _methodInfos = methodInfos; // 存放methods  key:方法名 value:YYClassMethodInfo对象
         for (unsigned int i = 0; i < methodCount; i++) {
             YYClassMethodInfo *info = [[YYClassMethodInfo alloc] initWithMethod:methods[i]];
             if (info.name) methodInfos[info.name] = info;
@@ -297,7 +310,7 @@ YYEncodingType YYEncodingGetType(const char *typeEncoding) {
     objc_property_t *properties = class_copyPropertyList(cls, &propertyCount);
     if (properties) {
         NSMutableDictionary *propertyInfos = [NSMutableDictionary new];
-        _propertyInfos = propertyInfos;
+        _propertyInfos = propertyInfos; // 存放properies  key:属性名 value:YYClassPropertyInfo对象
         for (unsigned int i = 0; i < propertyCount; i++) {
             YYClassPropertyInfo *info = [[YYClassPropertyInfo alloc] initWithProperty:properties[i]];
             if (info.name) propertyInfos[info.name] = info;
@@ -309,7 +322,7 @@ YYEncodingType YYEncodingGetType(const char *typeEncoding) {
     Ivar *ivars = class_copyIvarList(cls, &ivarCount);
     if (ivars) {
         NSMutableDictionary *ivarInfos = [NSMutableDictionary new];
-        _ivarInfos = ivarInfos;
+        _ivarInfos = ivarInfos; // 存放iVars  key:成员变量名 value:YYClassIvarInfo对象
         for (unsigned int i = 0; i < ivarCount; i++) {
             YYClassIvarInfo *info = [[YYClassIvarInfo alloc] initWithIvar:ivars[i]];
             if (info.name) ivarInfos[info.name] = info;

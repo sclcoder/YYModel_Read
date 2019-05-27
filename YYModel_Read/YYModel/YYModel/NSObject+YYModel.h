@@ -298,6 +298,7 @@ NS_ASSUME_NONNULL_BEGIN
         }
         @end
  
+ 
  @return A custom mapper for properties.
  */
 + (nullable NSDictionary<NSString *, id> *)modelCustomPropertyMapper;
@@ -361,7 +362,12 @@ NS_ASSUME_NONNULL_BEGIN
  @param dictionary The json/kv dictionary.
  
  @return Class to create from this dictionary, `nil` to use current class.
-
+ 
+ 情况一containers类型之字典:
+    内部在遍历转换字典中的value时,发现value是字典类型,回调用该方法获取该value的类型。默认使用通用类型_genericCls(modelContainerPropertyGenericClass方法中指定的通用类型)
+ 
+ modelContainerPropertyGenericClass方法: 通过该方法指定模型中所有容器类属性映射的类GenericClass
+ modelCustomClassForDictionary方法: 获取模型中的某个属性的映射类CustomClass,如果没有指定就用GenericClass
  */
 + (nullable Class)modelCustomClassForDictionary:(NSDictionary *)dictionary;
 

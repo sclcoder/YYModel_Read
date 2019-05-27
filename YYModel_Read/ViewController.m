@@ -20,9 +20,9 @@
     
     [super viewDidLoad];
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        [self benchmarkGithubUser];
-//        [self benchmarkWeiboStatus];
-//
+//        [self benchmarkGithubUser];
+        [self benchmarkWeiboStatus];
+
 //        [self testRobustness];
     });
     
@@ -348,9 +348,9 @@
     NSData *data = [NSData dataWithContentsOfFile:path];
     NSDictionary *json = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
     
-    
-    
-    
+    // scl test
+    [YYWeiboStatus yy_modelWithJSON:json];
+    return;
     
     /// Benchmark
     int count = 1000;
