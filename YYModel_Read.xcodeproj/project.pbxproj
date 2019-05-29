@@ -22,7 +22,29 @@
 		04A6BF732296781A0009C449 /* YYWeiboModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 04A6BF682296781A0009C449 /* YYWeiboModel.m */; };
 		04A6BF742296781A0009C449 /* DateFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = 04A6BF692296781A0009C449 /* DateFormatter.m */; };
 		04A6BF752296781A0009C449 /* weibo.json in Resources */ = {isa = PBXBuildFile; fileRef = 04A6BF6B2296781A0009C449 /* weibo.json */; };
+		04A6BF7D229E2A940009C449 /* YYModel_ReadTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 04A6BF7C229E2A940009C449 /* YYModel_ReadTests.m */; };
+		04A6BF90229E2C440009C449 /* YYTestBlacklistWhitelist.m in Sources */ = {isa = PBXBuildFile; fileRef = 04A6BF84229E2C440009C449 /* YYTestBlacklistWhitelist.m */; };
+		04A6BF91229E2C440009C449 /* YYTestModelToJSON.m in Sources */ = {isa = PBXBuildFile; fileRef = 04A6BF85229E2C440009C449 /* YYTestModelToJSON.m */; };
+		04A6BF92229E2C440009C449 /* YYTestAutoTypeConvert.m in Sources */ = {isa = PBXBuildFile; fileRef = 04A6BF86229E2C440009C449 /* YYTestAutoTypeConvert.m */; };
+		04A6BF93229E2C440009C449 /* YYTestCustomClass.m in Sources */ = {isa = PBXBuildFile; fileRef = 04A6BF87229E2C440009C449 /* YYTestCustomClass.m */; };
+		04A6BF94229E2C440009C449 /* YYTestCustomTransform.m in Sources */ = {isa = PBXBuildFile; fileRef = 04A6BF88229E2C440009C449 /* YYTestCustomTransform.m */; };
+		04A6BF95229E2C440009C449 /* YYTestCopyingAndCoding.m in Sources */ = {isa = PBXBuildFile; fileRef = 04A6BF89229E2C440009C449 /* YYTestCopyingAndCoding.m */; };
+		04A6BF96229E2C440009C449 /* YYTestHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 04A6BF8B229E2C440009C449 /* YYTestHelper.m */; };
+		04A6BF97229E2C440009C449 /* YYTestModelMapper.m in Sources */ = {isa = PBXBuildFile; fileRef = 04A6BF8C229E2C440009C449 /* YYTestModelMapper.m */; };
+		04A6BF98229E2C440009C449 /* YYTestNestModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 04A6BF8D229E2C440009C449 /* YYTestNestModel.m */; };
+		04A6BF99229E2C440009C449 /* YYTestDescription.m in Sources */ = {isa = PBXBuildFile; fileRef = 04A6BF8E229E2C440009C449 /* YYTestDescription.m */; };
+		04A6BF9A229E2C440009C449 /* YYTestClassInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 04A6BF8F229E2C440009C449 /* YYTestClassInfo.m */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		04A6BF7F229E2A940009C449 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 04A6BF39229677C10009C449 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 04A6BF40229677C10009C449;
+			remoteInfo = YYModel_Read;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		04A6BF41229677C10009C449 /* YYModel_Read.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = YYModel_Read.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -50,10 +72,32 @@
 		04A6BF6A2296781A0009C449 /* YYWeiboModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YYWeiboModel.h; sourceTree = "<group>"; };
 		04A6BF6B2296781A0009C449 /* weibo.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = weibo.json; sourceTree = "<group>"; };
 		04A6BF6C2296781A0009C449 /* DateFormatter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DateFormatter.h; sourceTree = "<group>"; };
+		04A6BF7A229E2A940009C449 /* YYModel_ReadTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = YYModel_ReadTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		04A6BF7C229E2A940009C449 /* YYModel_ReadTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = YYModel_ReadTests.m; sourceTree = "<group>"; };
+		04A6BF7E229E2A940009C449 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		04A6BF84229E2C440009C449 /* YYTestBlacklistWhitelist.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YYTestBlacklistWhitelist.m; sourceTree = "<group>"; };
+		04A6BF85229E2C440009C449 /* YYTestModelToJSON.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YYTestModelToJSON.m; sourceTree = "<group>"; };
+		04A6BF86229E2C440009C449 /* YYTestAutoTypeConvert.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YYTestAutoTypeConvert.m; sourceTree = "<group>"; };
+		04A6BF87229E2C440009C449 /* YYTestCustomClass.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YYTestCustomClass.m; sourceTree = "<group>"; };
+		04A6BF88229E2C440009C449 /* YYTestCustomTransform.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YYTestCustomTransform.m; sourceTree = "<group>"; };
+		04A6BF89229E2C440009C449 /* YYTestCopyingAndCoding.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YYTestCopyingAndCoding.m; sourceTree = "<group>"; };
+		04A6BF8A229E2C440009C449 /* YYTestHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YYTestHelper.h; sourceTree = "<group>"; };
+		04A6BF8B229E2C440009C449 /* YYTestHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YYTestHelper.m; sourceTree = "<group>"; };
+		04A6BF8C229E2C440009C449 /* YYTestModelMapper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YYTestModelMapper.m; sourceTree = "<group>"; };
+		04A6BF8D229E2C440009C449 /* YYTestNestModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YYTestNestModel.m; sourceTree = "<group>"; };
+		04A6BF8E229E2C440009C449 /* YYTestDescription.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YYTestDescription.m; sourceTree = "<group>"; };
+		04A6BF8F229E2C440009C449 /* YYTestClassInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YYTestClassInfo.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		04A6BF3E229677C10009C449 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		04A6BF77229E2A940009C449 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -67,6 +111,7 @@
 			isa = PBXGroup;
 			children = (
 				04A6BF43229677C10009C449 /* YYModel_Read */,
+				04A6BF7B229E2A940009C449 /* YYModel_ReadTests */,
 				04A6BF42229677C10009C449 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -75,6 +120,7 @@
 			isa = PBXGroup;
 			children = (
 				04A6BF41229677C10009C449 /* YYModel_Read.app */,
+				04A6BF7A229E2A940009C449 /* YYModel_ReadTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -142,6 +188,27 @@
 			path = WeiboModel;
 			sourceTree = "<group>";
 		};
+		04A6BF7B229E2A940009C449 /* YYModel_ReadTests */ = {
+			isa = PBXGroup;
+			children = (
+				04A6BF7E229E2A940009C449 /* Info.plist */,
+				04A6BF7C229E2A940009C449 /* YYModel_ReadTests.m */,
+				04A6BF86229E2C440009C449 /* YYTestAutoTypeConvert.m */,
+				04A6BF84229E2C440009C449 /* YYTestBlacklistWhitelist.m */,
+				04A6BF8F229E2C440009C449 /* YYTestClassInfo.m */,
+				04A6BF89229E2C440009C449 /* YYTestCopyingAndCoding.m */,
+				04A6BF87229E2C440009C449 /* YYTestCustomClass.m */,
+				04A6BF88229E2C440009C449 /* YYTestCustomTransform.m */,
+				04A6BF8E229E2C440009C449 /* YYTestDescription.m */,
+				04A6BF8A229E2C440009C449 /* YYTestHelper.h */,
+				04A6BF8B229E2C440009C449 /* YYTestHelper.m */,
+				04A6BF8C229E2C440009C449 /* YYTestModelMapper.m */,
+				04A6BF85229E2C440009C449 /* YYTestModelToJSON.m */,
+				04A6BF8D229E2C440009C449 /* YYTestNestModel.m */,
+			);
+			path = YYModel_ReadTests;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -162,6 +229,24 @@
 			productReference = 04A6BF41229677C10009C449 /* YYModel_Read.app */;
 			productType = "com.apple.product-type.application";
 		};
+		04A6BF79229E2A940009C449 /* YYModel_ReadTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 04A6BF83229E2A940009C449 /* Build configuration list for PBXNativeTarget "YYModel_ReadTests" */;
+			buildPhases = (
+				04A6BF76229E2A940009C449 /* Sources */,
+				04A6BF77229E2A940009C449 /* Frameworks */,
+				04A6BF78229E2A940009C449 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				04A6BF80229E2A940009C449 /* PBXTargetDependency */,
+			);
+			name = YYModel_ReadTests;
+			productName = YYModel_ReadTests;
+			productReference = 04A6BF7A229E2A940009C449 /* YYModel_ReadTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -173,6 +258,10 @@
 				TargetAttributes = {
 					04A6BF40229677C10009C449 = {
 						CreatedOnToolsVersion = 10.1;
+					};
+					04A6BF79229E2A940009C449 = {
+						CreatedOnToolsVersion = 10.1;
+						TestTargetID = 04A6BF40229677C10009C449;
 					};
 				};
 			};
@@ -190,6 +279,7 @@
 			projectRoot = "";
 			targets = (
 				04A6BF40229677C10009C449 /* YYModel_Read */,
+				04A6BF79229E2A940009C449 /* YYModel_ReadTests */,
 			);
 		};
 /* End PBXProject section */
@@ -206,6 +296,13 @@
 				04A6BF4C229677C10009C449 /* Main.storyboard in Resources */,
 				04A6BF6F2296781A0009C449 /* LICENSE in Resources */,
 				04A6BF752296781A0009C449 /* weibo.json in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		04A6BF78229E2A940009C449 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -227,7 +324,34 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		04A6BF76229E2A940009C449 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				04A6BF92229E2C440009C449 /* YYTestAutoTypeConvert.m in Sources */,
+				04A6BF7D229E2A940009C449 /* YYModel_ReadTests.m in Sources */,
+				04A6BF90229E2C440009C449 /* YYTestBlacklistWhitelist.m in Sources */,
+				04A6BF99229E2C440009C449 /* YYTestDescription.m in Sources */,
+				04A6BF98229E2C440009C449 /* YYTestNestModel.m in Sources */,
+				04A6BF96229E2C440009C449 /* YYTestHelper.m in Sources */,
+				04A6BF93229E2C440009C449 /* YYTestCustomClass.m in Sources */,
+				04A6BF91229E2C440009C449 /* YYTestModelToJSON.m in Sources */,
+				04A6BF9A229E2C440009C449 /* YYTestClassInfo.m in Sources */,
+				04A6BF95229E2C440009C449 /* YYTestCopyingAndCoding.m in Sources */,
+				04A6BF94229E2C440009C449 /* YYTestCustomTransform.m in Sources */,
+				04A6BF97229E2C440009C449 /* YYTestModelMapper.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		04A6BF80229E2A940009C449 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 04A6BF40229677C10009C449 /* YYModel_Read */;
+			targetProxy = 04A6BF7F229E2A940009C449 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		04A6BF4A229677C10009C449 /* Main.storyboard */ = {
@@ -395,6 +519,44 @@
 			};
 			name = Release;
 		};
+		04A6BF81229E2A940009C449 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = U74G29566D;
+				INFOPLIST_FILE = YYModel_ReadTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.yunjifen.YYModel-ReadTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/YYModel_Read.app/YYModel_Read";
+			};
+			name = Debug;
+		};
+		04A6BF82229E2A940009C449 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = U74G29566D;
+				INFOPLIST_FILE = YYModel_ReadTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.yunjifen.YYModel-ReadTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/YYModel_Read.app/YYModel_Read";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -412,6 +574,15 @@
 			buildConfigurations = (
 				04A6BF58229677C20009C449 /* Debug */,
 				04A6BF59229677C20009C449 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		04A6BF83229E2A940009C449 /* Build configuration list for PBXNativeTarget "YYModel_ReadTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				04A6BF81229E2A940009C449 /* Debug */,
+				04A6BF82229E2A940009C449 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
