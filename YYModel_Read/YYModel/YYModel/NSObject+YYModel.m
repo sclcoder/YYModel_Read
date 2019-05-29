@@ -1356,7 +1356,7 @@ static id ModelToJSONObjectRecursive(NSObject *model) {
     if ([model isKindOfClass:[NSDate class]]) return [YYISODateFormatter() stringFromDate:(id)model];
     if ([model isKindOfClass:[NSData class]]) return nil;
     
-    
+    // 核心方法
     _YYModelMeta *modelMeta = [_YYModelMeta metaWithClass:[model class]];
     if (!modelMeta || modelMeta->_keyMappedCount == 0) return nil;
     NSMutableDictionary *result = [[NSMutableDictionary alloc] initWithCapacity:64];
@@ -1940,7 +1940,9 @@ static NSString *ModelDescription(NSObject *model) {
 @end
 
 
+/// 针对数组和字典提供的分类接口
 
+// 存放model的数组
 @implementation NSArray (YYModel)
 
 + (NSArray *)yy_modelArrayWithClass:(Class)cls json:(id)json {
@@ -1974,7 +1976,7 @@ static NSString *ModelDescription(NSObject *model) {
 
 @end
 
-
+// 存放model的字典
 @implementation NSDictionary (YYModel)
 
 + (NSDictionary *)yy_modelDictionaryWithClass:(Class)cls json:(id)json {
