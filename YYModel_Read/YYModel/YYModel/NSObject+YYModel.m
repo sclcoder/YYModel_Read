@@ -1716,6 +1716,7 @@ static NSString *ModelDescription(NSObject *model) {
     return [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
 }
 
+/// 模型的拷贝
 - (id)yy_modelCopy{
     if (self == (id)kCFNull) return self;
     _YYModelMeta *modelMeta = [_YYModelMeta metaWithClass:self.class];
@@ -1724,7 +1725,7 @@ static NSString *ModelDescription(NSObject *model) {
     NSObject *one = [self.class new];
     for (_YYModelPropertyMeta *propertyMeta in modelMeta->_allPropertyMetas) {
         if (!propertyMeta->_getter || !propertyMeta->_setter) continue;
-        
+        /// 类型转换
         if (propertyMeta->_isCNumber) {
             switch (propertyMeta->_type & YYEncodingTypeMask) {
                 case YYEncodingTypeBool: {
@@ -1794,7 +1795,7 @@ static NSString *ModelDescription(NSObject *model) {
     }
     return one;
 }
-
+/// 自动归档、解档
 - (void)yy_modelEncodeWithCoder:(NSCoder *)aCoder {
     if (!aCoder) return;
     if (self == (id)kCFNull) {
@@ -1817,6 +1818,7 @@ static NSString *ModelDescription(NSObject *model) {
         } else {
             switch (propertyMeta->_type & YYEncodingTypeMask) {
                 case YYEncodingTypeObject: {
+                    /// id类型encode
                     id value = ((id (*)(id, SEL))(void *)objc_msgSend)((id)self, propertyMeta->_getter);
                     if (value && (propertyMeta->_nsType || [value respondsToSelector:@selector(encodeWithCoder:)])) {
                         if ([value isKindOfClass:[NSValue class]]) {
@@ -1916,11 +1918,11 @@ static NSString *ModelDescription(NSObject *model) {
 }
 
 - (BOOL)yy_modelIsEqual:(id)model {
-    if (self == model) return YES;
+    if (self == model) return YES; // 直接比较地址
     if (![model isMemberOfClass:self.class]) return NO;
     _YYModelMeta *modelMeta = [_YYModelMeta metaWithClass:self.class];
-    if (modelMeta->_nsType) return [self isEqual:model];
-    if ([self hash] != [model hash]) return NO;
+    if (modelMeta->_nsType) return [self isEqual:model]; // 是NSFoundation对象 调用isEqual:方法比较
+    if ([self hash] != [model hash]) return NO; // 比较哈希值
     
     for (_YYModelPropertyMeta *propertyMeta in modelMeta->_allPropertyMetas) {
         if (!propertyMeta->_isKVCCompatible) continue;
