@@ -585,7 +585,7 @@ static force_inline id YYValueForMultiKeys(__unsafe_unretained NSDictionary *dic
     // create mapper
     // mapper:最终存放_YYModelPropertyMeta的字典
     // 如果有自定义属性映射modelCustomPropertyMapper,操作如下:
-    // key是propertyMeta->_mappedToKey(用用户自定义的mappedToKey 代替propertyName) value是_YYModelPropertyMeta
+    // key是propertyMeta->_mappedToKey(用户自定义的mappedToKey 代替propertyName) value是_YYModelPropertyMeta
     NSMutableDictionary *mapper = [NSMutableDictionary new];
     NSMutableArray *keyPathPropertyMetas = [NSMutableArray new];
     NSMutableArray *multiKeysPropertyMetas = [NSMutableArray new];
@@ -624,7 +624,8 @@ static force_inline id YYValueForMultiKeys(__unsafe_unretained NSDictionary *dic
                     propertyMeta->_mappedToKeyPath = keyPath;
                     [keyPathPropertyMetas addObject:propertyMeta]; // 记录有keyPath的propertyMeta
                 }
-                // 多个属性映射同一个key,mapper中的propertyMeta会被覆盖,通过_next指针链记录了被覆盖的属性
+                // 当多个属性映射同一个key,mapper中的propertyMeta会被覆盖,所以这里通过_next指针链记录了被覆盖的属性
+                // 通过链表的方式将映射同一个key的属性串联起来
                 propertyMeta->_next = mapper[mappedToKey] ?: nil; // 通过next记录上一个propertyMeta
                 mapper[mappedToKey] = propertyMeta;
                 
@@ -643,7 +644,7 @@ static force_inline id YYValueForMultiKeys(__unsafe_unretained NSDictionary *dic
                         [mappedToKeyArray addObject:oneKey];
                     }
                     
-                    if (!propertyMeta->_mappedToKey) { // 只记录第一个有值的key?
+                    if (!propertyMeta->_mappedToKey) { // 只记录第一个有值的key
                         propertyMeta->_mappedToKey = oneKey;
                         propertyMeta->_mappedToKeyPath = keyPath.count > 1 ? keyPath : nil;
                     }
@@ -685,6 +686,15 @@ static force_inline id YYValueForMultiKeys(__unsafe_unretained NSDictionary *dic
 /// Returns the cached model class meta
 + (instancetype)metaWithClass:(Class)cls {
     if (!cls) return nil;
+    /**
+     静态变量（英语：Static Variable）在计算机编程领域指在程序执行前系统就为之静态分配（也即在运行时中不再改变分配情况）存储空间的一类变量。与之相对应的是在运行时只暂时存在的自动变量（即局部变量）与以动态分配方式获取存储空间的一些对象，其中自动变量的存储空间在调用栈上分配与释放。
+
+     除明确标识出变量的生命周期外，将变量声明为static存储类还会根据变量属性不同而有一些特殊的作用：
+
+     对于静态全局变量来说，针对某一源文件的以static声明的文件级变量与函数的作用域只限于文件内（只在文件内可见），也即“内部连接”,因而可以用来限定变量的作用域；
+     对于静态局部变量来说，在函数内以static声明的变量虽然与自动局部变量的作用域相同（即作用域都只限于函数内），但存储空间是以静态分配而非默认的自动分配方式获取的，因而存储空间所在区域不同（一般来说，静态分配时存储空间于编译时在程序数据段分配，一次分配全程有效；而自动分配时存储空间则是于调用栈上分配，只在调用时分配与释放），且两次调用间变量值始终保持一致；必须注意，静态局部变量只能初始化一次，这是由编译器来保证实现。[1]
+     对于静态成员变量来说，在C++中，在类的定义中以static声明的成员变量属于类变量，也即在所有类实例中共享，与之相对的就是过程变量。
+     */
     static CFMutableDictionaryRef cache;
     static dispatch_once_t onceToken;
     static dispatch_semaphore_t lock;
@@ -692,6 +702,7 @@ static force_inline id YYValueForMultiKeys(__unsafe_unretained NSDictionary *dic
         cache = CFDictionaryCreateMutable(CFAllocatorGetDefault(), 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
         lock = dispatch_semaphore_create(1);
     });
+    
     dispatch_semaphore_wait(lock, DISPATCH_TIME_FOREVER);
     _YYModelMeta *meta = CFDictionaryGetValue(cache, (__bridge const void *)(cls));
     dispatch_semaphore_signal(lock);
@@ -1663,6 +1674,7 @@ static NSString *ModelDescription(NSObject *model) {
     if (modelMeta->_keyMappedCount >= CFDictionaryGetCount((CFDictionaryRef)dic)) {
         // Calls a function once for each value in the dictionary.  传入的dictionary是dic(json数据)
         CFDictionaryApplyFunction((CFDictionaryRef)dic, ModelSetWithDictionaryFunction, &context); // model的属性赋值
+        
         // 结合_YYModelMeta的初始化分析一下的情况
         if (modelMeta->_keyPathPropertyMetas) { // property meta which is mapped to a key path
             CFArrayApplyFunction((CFArrayRef)modelMeta->_keyPathPropertyMetas,
@@ -1670,6 +1682,7 @@ static NSString *ModelDescription(NSObject *model) {
                                  ModelSetWithPropertyMetaArrayFunction,
                                  &context);
         }
+        
         if (modelMeta->_multiKeysPropertyMetas) {  // property meta which is mapped to multi keys.
             CFArrayApplyFunction((CFArrayRef)modelMeta->_multiKeysPropertyMetas,
                                  CFRangeMake(0, CFArrayGetCount((CFArrayRef)modelMeta->_multiKeysPropertyMetas)),

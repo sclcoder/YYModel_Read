@@ -20,8 +20,8 @@ NS_ASSUME_NONNULL_BEGIN
 typedef NS_OPTIONS(NSUInteger, YYEncodingType) {
     
     YYEncodingTypeMask       = 0xFF, ///< mask of type value
+    /// 0-22 注意:此处并非位，而是数值
     YYEncodingTypeUnknown    = 0, ///< unknown
-    
     YYEncodingTypeVoid       = 1, ///< void
     YYEncodingTypeBool       = 2, ///< bool
     YYEncodingTypeInt8       = 3, ///< char / BOOL

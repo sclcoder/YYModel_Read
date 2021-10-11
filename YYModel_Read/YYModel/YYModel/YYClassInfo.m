@@ -180,6 +180,9 @@ YYEncodingType YYEncodingGetType(const char *typeEncoding) {
     unsigned int attrCount;
     objc_property_attribute_t *attrs = property_copyAttributeList(property, &attrCount);
     for (unsigned int i = 0; i < attrCount; i++) {
+        
+        NSLog(@"key:%c value:%s",attrs[i].name[0],attrs[i].value);
+        
         switch (attrs[i].name[0]) {
             case 'T': { // Type encoding
                 if (attrs[i].value) {
@@ -356,12 +359,15 @@ YYEncodingType YYEncodingGetType(const char *typeEncoding) {
         metaCache = CFDictionaryCreateMutable(CFAllocatorGetDefault(), 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
         lock = dispatch_semaphore_create(1);
     });
+    
+    
     dispatch_semaphore_wait(lock, DISPATCH_TIME_FOREVER);
     YYClassInfo *info = CFDictionaryGetValue(class_isMetaClass(cls) ? metaCache : classCache, (__bridge const void *)(cls));
     if (info && info->_needUpdate) {
         [info _update];
     }
     dispatch_semaphore_signal(lock);
+    
     // info不存在才创建YYClassInfo 优先去缓存中找
     if (!info) {
         info = [[YYClassInfo alloc] initWithClass:cls];
